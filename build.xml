@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="ant-scala" default="compile" basedir=".">
+  <description>Ant Scala Project</description>
+  
+  <import file="${basedir}/env.xml" optional="true"/>
+  
+  <target name="init">
+    <property name="scala-library.jar" value="${scala.home}/lib/scala-library.jar" />
+    <property name="scala-compiler.jar" value="${scala.home}/lib/scala-compiler.jar" /> 
+    <property name="scala.reflect" value="${scala.home}/lib/scala-reflect.jar"/>
+    <path id="build.classpath">
+      <pathelement location="${scala-library.jar}" />
+      <pathelement location="${build.dir}" />
+    </path>
+    <taskdef resource="scala/tools/ant/antlib.xml">
+      <classpath>
+        <pathelement location="${scala-compiler.jar}" />
+        <pathelement location="${scala-library.jar}" />
+        <pathelement location="${scala.reflect}"/>
+      </classpath>
+    </taskdef>
+  </target>
+
+  <target name="compile" depends="init">
+    <mkdir dir="${build.dir}" />
+    <scalac srcdir="${sources.dir}" destdir="${build.dir}" classpathref="build.classpath" deprecation="on">
+      <include name="${scala-source.dir}/**/*.scala" />
+      <exclude name="${scala-test.dir}/**/*.scala" />
+    </scalac>
+  </target>
+
+  <target name="create-jar" depends="compile">
+    <jar basedir="${build.dir}" jarfile="${build.dir.jar}/${ant.project.name}.jar" manifest="Manifest.txt"/>
+  </target>
+
+</project>
